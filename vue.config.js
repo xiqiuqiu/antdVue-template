@@ -1,23 +1,23 @@
-"use strict";
-const path = require("path");
+'use strict'
+const path = require('path')
 
 function resolve(dir) {
-  return path.join(__dirname, dir);
+  return path.join(__dirname, dir)
 }
 
 module.exports = {
   runtimeCompiler: true,
-  publicPath: "/",
-  outputDir: "dist",
-  assetsDir: "static",
-  lintOnSave: process.env.NODE_ENV === "development",
+  publicPath: '/',
+  outputDir: 'dist',
+  assetsDir: 'static',
+  lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
     port: 3000,
     open: true,
     overlay: {
       warnings: false,
-      errors: true,
+      errors: true
     },
     /* proxy: {
       [process.env.VUE_APP_BASE_API]: {
@@ -25,84 +25,84 @@ module.exports = {
         changeOrigin: true,
       },
     }, */
-    before: require('./mock/mock-server') //before方法：能够在其他所有的中间件之前执行自定义的中间件
+    before: require('./mock/mock-server') // before方法：能够在其他所有的中间件之前执行自定义的中间件
   },
   configureWebpack: {
     resolve: {
       alias: {
-        "@": resolve("src"),
-      },
-    },
+        '@': resolve('src')
+      }
+    }
   },
   chainWebpack(config) {
-    config.plugin("preload").tap(() => [
+    config.plugin('preload').tap(() => [
       {
-        rel: "preload",
+        rel: 'preload',
         fileBlacklist: [/\.map$/, /hot-update\.js$/, /runtime\..*\.js$/],
-        include: "initial",
-      },
-    ]);
+        include: 'initial'
+      }
+    ])
 
-    config.plugins.delete("prefetch");
+    config.plugins.delete('prefetch')
 
     config.module
-      .rule("svg")
-      .exclude.add(resolve("src/icons"))
-      .end();
-    config.module
-      .rule("icons")
-      .test(/\.svg$/)
-      .include.add(resolve("src/icons"))
+      .rule('svg')
+      .exclude.add(resolve('src/icons'))
       .end()
-      .use("svg-sprite-loader")
-      .loader("svg-sprite-loader")
+    config.module
+      .rule('icons')
+      .test(/\.svg$/)
+      .include.add(resolve('src/icons'))
+      .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
       .options({
-        symbolId: "icon-[name]",
+        symbolId: 'icon-[name]'
       })
-      .end();
+      .end()
 
-    config.when(process.env.NODE_ENV !== "development", (config) => {
+    config.when(process.env.NODE_ENV !== 'development', (config) => {
       config
-        .plugin("ScriptExtHtmlWebpackPlugin")
-        .after("html")
-        .use("script-ext-html-webpack-plugin", [
+        .plugin('ScriptExtHtmlWebpackPlugin')
+        .after('html')
+        .use('script-ext-html-webpack-plugin', [
           {
-            inline: /runtime\..*\.js$/,
-          },
+            inline: /runtime\..*\.js$/
+          }
         ])
-        .end();
+        .end()
       config.optimization.splitChunks({
-        chunks: "all",
+        chunks: 'all',
         cacheGroups: {
           libs: {
-            name: "chunk-libs",
+            name: 'chunk-libs',
             test: /[\\/]node_modules[\\/]/,
             priority: 10,
-            chunks: "initial",
+            chunks: 'initial'
           },
           elementUI: {
-            name: "chunk-elementUI",
+            name: 'chunk-elementUI',
             priority: 20,
-            test: /[\\/]node_modules[\\/]_?element-ui(.*)/,
+            test: /[\\/]node_modules[\\/]_?element-ui(.*)/
           },
           commons: {
-            name: "chunk-commons",
-            test: resolve("src/components"),
+            name: 'chunk-commons',
+            test: resolve('src/components'),
             minChunks: 3,
             priority: 5,
-            reuseExistingChunk: true,
-          },
-        },
-      });
-      config.optimization.runtimeChunk("single");
-    });
+            reuseExistingChunk: true
+          }
+        }
+      })
+      config.optimization.runtimeChunk('single')
+    })
   },
   css: {
     loaderOptions: {
-        less: {
-            modifyVars: {},
-            javascriptEnabled: true
-        }
+      less: {
+        modifyVars: {},
+        javascriptEnabled: true
+      }
     }
-  },
-};
+  }
+}

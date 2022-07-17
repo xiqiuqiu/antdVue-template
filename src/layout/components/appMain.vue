@@ -62,6 +62,10 @@ export default {
   },
   mounted() {
     this.isCollapsed = this.collapsed
+    console.log(this.$route.path)
+  },
+  created() {
+
   },
   methods: {
     changecollapsed() {
